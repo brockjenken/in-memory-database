@@ -1,4 +1,3 @@
-import multiprocessing
 from gunicorn.app.base import BaseApplication
 
 from app.app import create_app
@@ -23,8 +22,11 @@ class Application(BaseApplication):
 
 def start_app():
     app = create_app()
+    options = {
+        "bind": "0.0.0.0:8000"
+    }
     setup_routes(app)
-    Application(app).run()
+    Application(app, options).run()
 
 
 if __name__ == "__main__":

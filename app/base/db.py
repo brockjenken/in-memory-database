@@ -7,7 +7,7 @@ class Collection:
         self.name = name
 
         if self.name not in self.data:
-            self.data[self.name] = []
+            self.data[self.name] = {}
 
     def upsert(self, _id: str, data: Dict[str, Any]):
         self.data[self.name][_id] = data
