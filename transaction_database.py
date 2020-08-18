@@ -14,7 +14,7 @@ found here:
 
 https://wiki.python.org/moin/TimeComplexity
 
-To simplify the creation of transactions the Transaction Model is used. The time complexities of creating the models
+To simplify the creation of transactions, the Transaction Model is used. The time complexities of creating the models
 and parsing them to dicts are on the scale of O(1), as it is directly proportional to the number of fields in the model 
 (2 in this case).
 """
@@ -100,13 +100,13 @@ class TransactionDatabase:
 
         transaction = Transaction(**self.transactions[transaction_id])
 
-        for k, values in transaction.get_data().items():
-            if self.data.get(k) != values[INITIAL_VALUE]:
+        for key, values in transaction.get_data().items():
+            if self.data.get(key) != values[INITIAL_VALUE]:
                 self.rollback_transaction(transaction_id)
                 raise ValueError("The data has been modified since the beginning of the transaction")
 
-        for k, values in transaction.get_data().items():
-            self.data[k] = values[NEW_VALUE]
+        for key, values in transaction.get_data().items():
+            self.data[key] = values[NEW_VALUE]
 
         self.invalid_ids.add(transaction_id)
 
