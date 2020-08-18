@@ -29,5 +29,4 @@ Run the provided driver file by executing:
 python driver.py
 ```
 
-The provided driver file has the example already loaded, but can be 
-modified for further testing.
+The provided driver file can be modified for further testing.
