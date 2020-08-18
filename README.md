@@ -18,7 +18,7 @@ If a value is changed in the global data after a change is staged in the
 transaction, the commit will fail and the ID will become available again.
 
 If a commit succeeds, the transaction will remain in the database 
-and its id will be registered so it can not be used in the future. 
+and its `id` will be registered so it cannot be used in the future. 
 
 Errors are also thrown if one attempts to access a Transaction that does not
 exist.
