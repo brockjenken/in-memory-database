@@ -1,9 +1,9 @@
 """
-This model represents a transaction. It stores the transaction's id, along with its key and value. It helps to
+This model represents a transaction. It stores the transaction's id, along with the staged data. It helps to
 simplify defaulting None values and converting to dicts for storage.
 
 When retrieving values from a transaction, it will throw a KeyError if it tries to retrieve with a key that has not
-been used yet to delete or modify a value.
+been involved in a stage.
 
 Every time a value is set or deleted, the initial value is passed to help ensure a more secure transaction when
 committing.
