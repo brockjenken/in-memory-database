@@ -2,8 +2,11 @@
 This model represents a transaction. It stores the transaction's id, along with its key and value. It helps to
 simplify defaulting None values and converting to dicts for storage.
 
-When retrieving values from a transaction, it will return the new value if it exists, otherwise it will return
-the initial value.
+When retrieving values from a transaction, it will throw a KeyError if it tries to retrieve with a key that has not
+been used yet to delete or modify a value.
+
+Every time a value is set or deleted, the initial value is passed to help ensure a more secure transaction when
+committing.
 """
 from typing import Dict, Union
 
@@ -20,26 +23,19 @@ class TransactionModel:
     def get_data(self) -> Dict:
         return self.data
 
-    def initialize_data(self, data: Dict[str, str]):
-        for k, v in data.items():
-            self.data[k] = {INITIAL_VALUE: v}
-
     def get_value(self, key: str) -> str:
-        data = self.data.get(key, {})
+        return self.data[key][INITIAL_VALUE]
 
-        if NEW_VALUE in data:
-            return data[NEW_VALUE]
-
-        return data.get(INITIAL_VALUE)
-
-    def set_value(self, key: str, value: str):
+    def set_value(self, key: str, initial_value: str, new_value: str):
         if key not in self.data:
-            self.data[key] = {INITIAL_VALUE: None, NEW_VALUE: value}
+            self.data[key] = {INITIAL_VALUE: initial_value, NEW_VALUE: new_value}
         else:
-            self.data[key][NEW_VALUE] = value
+            self.data[key][NEW_VALUE] = new_value
 
-    def delete_value(self, key: str):
-        if key in self.data:
+    def delete_value(self, initial_value: str, key: str):
+        if key not in self.data:
+            self.data[key] = {INITIAL_VALUE: initial_value, NEW_VALUE: None}
+        else:
             self.data[key][NEW_VALUE] = None
 
     def dict(self):

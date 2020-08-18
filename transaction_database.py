@@ -40,11 +40,19 @@ class TransactionDatabase:
 
         return self.data.get(key)
 
+    # This method uses an error catch to avoid having to load the Transaction object with all the current data
+    # If a key cannot be found in a transaction, it hasn't modified anything, so the global value can be used
     def _get(self, key: str, transaction_id: str) -> str:
         self.check_valid_transaction(transaction_id)
 
         transaction = Transaction(**self.transactions[transaction_id])
-        return transaction.get_value(key)
+
+        try:
+            value = transaction.get_value(key)
+        except KeyError:
+            value = self.data.get(key)
+
+        return value
 
     def put(self, key: str, value: str, *args):
         if len(args) > 0:
@@ -55,8 +63,9 @@ class TransactionDatabase:
     def _put(self, key: str, value: str, transaction_id: str):
         self.check_valid_transaction(transaction_id)
 
+        initial_val = self.data.get(key)
         transaction = Transaction(**self.transactions[transaction_id])
-        transaction.set_value(key, value)
+        transaction.set_value(key, initial_val, value)
 
         self.transactions[transaction_id] = transaction.dict()
 
@@ -69,8 +78,9 @@ class TransactionDatabase:
     def _delete(self, key: str, transaction_id: str):
         self.check_valid_transaction(transaction_id)
 
+        initial_val = self.data.get(key)
         transaction = Transaction(**self.transactions[transaction_id])
-        transaction.delete_value(key)
+        transaction.delete_value(key, initial_val)
 
         self.transactions[transaction_id] = transaction
 
@@ -79,7 +89,6 @@ class TransactionDatabase:
         self.check_valid_transaction(transaction_id, detect_absent=False)
 
         transaction = Transaction(id=transaction_id)
-        transaction.initialize_data(self.data)
         self.transactions[transaction_id] = transaction.dict()
 
     def rollback_transaction(self, transaction_id: str):
